@@ -10,6 +10,9 @@ import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -42,19 +45,20 @@ public class CrimeFragment extends Fragment {
     private CheckBox mSolvedCheckBox;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); //parent runs same function!
+        setHasOptionsMenu(true);
 
         UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         FragmentManager manager = getFragmentManager();
         View v = inflater.inflate(R.layout.fragment_crime, container, false);
 
-        mTitleField = (EditText)v.findViewById(R.id.crime_title);
+        mTitleField = (EditText) v.findViewById(R.id.crime_title);
         mTitleField.setText(mCrime.getTitle());
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
@@ -72,12 +76,12 @@ public class CrimeFragment extends Fragment {
                 //blank
             }
         });
-        Log.d(TAG, "Crime Title created");
+        Log.d(TAG, "Crime Fragment - Crime Title created");
 
-        mDateButton = (Button)v.findViewById(R.id.crime_date);
-        mDateButton.setOnClickListener(new View.OnClickListener(){
+        mDateButton = (Button) v.findViewById(R.id.crime_date);
+        mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 FragmentManager manager = getFragmentManager();
                 DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
                 dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE); //make CrimeFragment the target fragment of DatePickerFragment
@@ -85,25 +89,25 @@ public class CrimeFragment extends Fragment {
 
             }
         });
-        Log.d(TAG, "DatePicker created");
+        Log.d(TAG, "Crime Fragment - DatePicker created");
         updateDate();
 
-        mTimeButton = (Button)v.findViewById(R.id.crime_time);
-        mTimeButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                FragmentManager manager = getFragmentManager();
-                TimePickerFragment timeDialog = TimePickerFragment.newInstance(mCrime.getDate());
-                timeDialog.setTargetFragment(CrimeFragment.this, REQUEST_TIME);
-                timeDialog.show(manager, DIALOG_TIME);
-            }
-        }
+        mTimeButton = (Button) v.findViewById(R.id.crime_time);
+        mTimeButton.setOnClickListener(new View.OnClickListener() {
+                                           @Override
+                                           public void onClick(View v) {
+                                               FragmentManager manager = getFragmentManager();
+                                               TimePickerFragment timeDialog = TimePickerFragment.newInstance(mCrime.getDate());
+                                               timeDialog.setTargetFragment(CrimeFragment.this, REQUEST_TIME);
+                                               timeDialog.show(manager, DIALOG_TIME);
+                                           }
+                                       }
         );
-        Log.d(TAG, "TimeDialog created");
+        Log.d(TAG, "Crime Fragment - TimeDialog created");
 
         updateTime();
 
-        mSolvedCheckBox = (CheckBox)v.findViewById(R.id.crime_solved);
+        mSolvedCheckBox = (CheckBox) v.findViewById(R.id.crime_solved);
         mSolvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -114,47 +118,68 @@ public class CrimeFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){ //ActivityManger calls after child activity dies
-        if (resultCode != Activity.RESULT_OK){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) { //ActivityManger calls after child activity dies
+        if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        Log.d(TAG, "######CF onActivityResult reqCode: " + requestCode + " result " + resultCode);
-        if (requestCode == REQUEST_DATE){
+        Log.d(TAG, "Crime Fragment - onActivityResult called, reqCode: " + requestCode + " result " + resultCode);
+        if (requestCode == REQUEST_DATE) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date); //set new date from DatePicker in Crime
             updateDate();
         }
-        if (requestCode == REQUEST_TIME){
-            int hour =  data.getIntExtra(EXTRA_HOUR, 12);
+        if (requestCode == REQUEST_TIME) {
+            int hour = data.getIntExtra(EXTRA_HOUR, 12);
             int minute = data.getIntExtra(EXTRA_MINUTE, 0);
             Calendar calendar = Calendar.getInstance();
             calendar.set(Calendar.HOUR_OF_DAY, hour);
             calendar.set(Calendar.MINUTE, minute);
             mCrime.getDate().setTime(calendar.getTimeInMillis());
 
-            Log.d(TAG, "################# CF: The time to be set is " + hour + ":" + minute);
+            Log.d(TAG, "Crime Fragment - The time to be set is " + hour + ":" + minute);
             updateTime();
         }
     }
 
     private void updateDate() {
         DateFormat df = new android.text.format.DateFormat();
+        Log.d(TAG, String.format(String.format("Crime Fragment - update date " + df.format("EEE MMM dd, yyyy", mCrime.getDate()))));
         mDateButton.setText(df.format("EEE MMM dd, yyyy", mCrime.getDate()));
     }
 
-    private void updateTime(){
+    private void updateTime() {
         DateFormat df = new android.text.format.DateFormat();
-        Log.d(TAG, "####update time from Date " + df.format("hh:mm a", mCrime.getDate()));
+        Log.d(TAG, "Crime Fragment - update time from Date " + df.format("hh:mm a", mCrime.getDate()));
         mTimeButton.setText(df.format("HH:mm aa", mCrime.getDate()));
 
     }
 
-    public static CrimeFragment newInstance(UUID crimeId){
+    public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_CRIME_ID, crimeId);
 
         CrimeFragment fragment = new CrimeFragment();
         fragment.setArguments(args);
+        Log.d(TAG, "Crime Fragment - new Crime Fragment created");
         return fragment;
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.crime_fragment, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.menu_item_delete_crime:
+                CrimeLab.get(getActivity()).deleteCrime(mCrime);
+                getActivity().finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(menuItem);
+        }
+    }
+
 }

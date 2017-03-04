@@ -36,7 +36,7 @@ public class TimePickerFragment extends DialogFragment {
         calendar.setTime(date);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
-
+        Log.d(TAG, "TimePickerFragment - onCreateDialog");
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_time, null);
         mTimePicker = (TimePicker) v.findViewById(R.id.dialog_time_time_picker);
          //no init method for TimePicker
@@ -47,7 +47,7 @@ public class TimePickerFragment extends DialogFragment {
 
                 int hour = mTimePicker.getHour();
                 int minute = mTimePicker.getMinute();
-                Log.d(TAG, "############# Time Picker: The time is " + hour + ":" + minute);
+                Log.d(TAG, "TimePickerFragment - The time is " + hour + ":" + minute);
 
                 sendResult(Activity.RESULT_OK, hour, minute);
             }
@@ -57,7 +57,7 @@ public class TimePickerFragment extends DialogFragment {
     public static TimePickerFragment newInstance(Date time){
         Bundle args = new Bundle();
         args.putSerializable(ARG_TIME, time);
-
+        Log.d(TAG, "TimePickerFragment - newInstance time " + time);
         TimePickerFragment fragment = new TimePickerFragment();
         fragment.setArguments(args);
         return fragment;
@@ -67,11 +67,11 @@ public class TimePickerFragment extends DialogFragment {
         if (getTargetFragment() == null){
             return;
         }
-        Log.d(TAG, "sendResult fcn" + hour + ':' + minute);
+        Log.d(TAG, "TimePickerFragment - sendResult fcn " + hour + ':' + minute);
         Intent intent = new Intent();
         intent.putExtra(EXTRA_HOUR, hour);
         intent.putExtra(EXTRA_MINUTE, minute);
-        Log.d(TAG, "TimePicker resultCode to send " + resultCode + " requ code " + getTargetRequestCode());
+        Log.d(TAG, "TimePickerFragment - resultCode to send " + resultCode + " requ code " + getTargetRequestCode());
         getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
     }
 }

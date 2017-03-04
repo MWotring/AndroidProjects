@@ -20,7 +20,7 @@ public class CrimeProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        Log.d(TAG, "!!!!!!!!!!!!!Prrovider Database onCreate");
+        Log.d(TAG, "!!!!!!!!!!!!!Provider Database onCreate");
 
         db = new CrimeDatabase(getContext());
         return false;

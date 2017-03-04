@@ -35,6 +35,7 @@ public class DatePickerFragment extends DialogFragment {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
+        Log.d(TAG, "DatePickerFragment - onCreateDialog");
 
         View v = LayoutInflater.from(getActivity()).inflate(R.layout.dialog_date, null);
         mDatePicker = (DatePicker) v.findViewById(R.id.dialog_date_date_picker);
@@ -59,6 +60,7 @@ public class DatePickerFragment extends DialogFragment {
 
         DatePickerFragment fragment = new DatePickerFragment();
         fragment.setArguments(args);
+        Log.d(TAG, "DatePickerFragment - newInstance - bundle date " + date);
         return fragment;
     }
 
@@ -66,7 +68,7 @@ public class DatePickerFragment extends DialogFragment {
         if (getTargetFragment() == null){
             return;
         }
-        Log.d(TAG, "DatePicker resultCode to send " + resultCode + " requ code " + getTargetRequestCode());
+        Log.d(TAG, "DatePickerFragment - sendResult resultCode to send " + resultCode + " requ code " + getTargetRequestCode());
         Intent intent = new Intent();
         intent.putExtra(EXTRA_DATE, date);
 

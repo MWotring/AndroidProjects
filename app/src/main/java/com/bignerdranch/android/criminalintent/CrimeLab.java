@@ -18,20 +18,6 @@ public class CrimeLab {
 
     private CrimeLab(Context context) {
         mCrimes = new ArrayList<>();
-
-        for(int i = 0; i< 100; i++){
-            Crime crime = new Crime();
-            crime.setTitle("Crime #" + i);
-            crime.setSolved(i % 2 == 0); //every other one
-            ContentValues content = new ContentValues();
-            content.put("UUID", crime.getId().toString());
-            content.put("TITLE", crime.getTitle());
-            content.put("TIMESTAMP", crime.getDate().getTime());
-            content.put("SOLVED", crime.isSolved());
-            mCrimes.add(crime);
-            ContentResolver resolver = context.getContentResolver();
-            resolver.insert(, content);
-        }
     }
 
     public static CrimeLab get(Context context){
@@ -39,6 +25,14 @@ public class CrimeLab {
             sCrimeLab = new CrimeLab(context);
         }
         return sCrimeLab;
+    }
+
+    public void addCrime(Crime c){
+        mCrimes.add(c);
+    }
+
+    public void deleteCrime(Crime c){
+        mCrimes.remove(c);
     }
 
     public List<Crime> getCrimes() {
